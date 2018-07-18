@@ -18,6 +18,12 @@ func parseRoles(input string) []string {
 	return adjusted
 }
 
+var profileDomains = map[string]bool{
+	"github.com":  true,
+	"medium.com":  true,
+	"twitter.com": true,
+}
+
 func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
 	people := []*types.Person{}
 	csvReader := csv.NewReader(reader)
@@ -52,15 +58,10 @@ func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
 					lastName = record[i]
 				} else if header == "roles" {
 					roles = parseRoles(record[i])
-				} else if header == "github.com" {
+				} else if profileDomains[header] {
 					s := record[i]
 					if s != "" {
-						profileUsernames["github.com"] = s
-					}
-				} else if header == "medium.com" {
-					s := record[i]
-					if s != "" {
-						profileUsernames["medium.com"] = s
+						profileUsernames[header] = s
 					}
 				}
 			}
