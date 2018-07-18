@@ -1,6 +1,6 @@
-firstName,lastName,roles,gitHubUsername
-Patrick,Smith,"engineering",BurntCaramel
-Philip,Castiglione,engineering,PhilipCastiglione
-Dean,Francis,ENGINEERING,deanfra
-Mark,Wells,EXECUTIVE,
+firstName,lastName,roles,github.com,medium.com
+Patrick,Smith,"engineering",BurntCaramel,concreteniche
+Philip,Castiglione,engineering,PhilipCastiglione,
+Dean,Francis,ENGINEERING,deanfra,
+Mark,Wells,EXECUTIVE,,
 

@@ -2,19 +2,19 @@ package types
 
 // Person is someone who has worked in your organization
 type Person struct {
-	firstName      string
-	lastName       string
-	roles          []string
-	gitHubUsername *string
+	firstName        string
+	lastName         string
+	roles            []string
+	profileUsernames map[string]string
 }
 
 // NewPerson makes a person with the provided values
-func NewPerson(firstName string, lastName string, roles []string, gitHubUsername *string) *Person {
+func NewPerson(firstName string, lastName string, roles []string, profileUsernames map[string]string) *Person {
 	person := Person{
-		firstName:      firstName,
-		lastName:       lastName,
-		roles:          roles,
-		gitHubUsername: gitHubUsername,
+		firstName:        firstName,
+		lastName:         lastName,
+		roles:            roles,
+		profileUsernames: profileUsernames,
 	}
 	return &person
 }
@@ -45,12 +45,22 @@ func (person *Person) Roles() *[]*string {
 	return &roles
 }
 
-// GitHubUser resolves using the `gitHubUsername` field
-func (person *Person) GitHubUser() *GitHubUser {
-	if person.gitHubUsername == nil {
+// Profiles resolves using the `profileUsernames` field
+func (person *Person) Profiles() *[]*Profile {
+	profiles := []*Profile{}
+	for domain, username := range person.profileUsernames {
+		profiles = append(profiles, NewProfile(domain, username))
+	}
+	return &profiles
+}
+
+// GitHubUser resolves using the `profileUsernames` field for `github.com`
+func (person *Person) GitHubUser() *Profile {
+	gitHubUsername, ok := person.profileUsernames["github.com"]
+	if !ok {
 		return nil
 	}
 
-	user := NewGitHubUser(*person.gitHubUsername)
+	user := NewProfile("github.com", gitHubUsername)
 	return user
 }

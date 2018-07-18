@@ -43,7 +43,7 @@ func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
 			firstName := ""
 			lastName := ""
 			var roles []string
-			var gitHubUsername *string
+			profileUsernames := make(map[string]string)
 
 			for i, header := range headers {
 				if header == "firstName" {
@@ -52,13 +52,20 @@ func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
 					lastName = record[i]
 				} else if header == "roles" {
 					roles = parseRoles(record[i])
-				} else if header == "gitHubUsername" {
+				} else if header == "github.com" {
 					s := record[i]
-					gitHubUsername = &s
+					if s != "" {
+						profileUsernames["github.com"] = s
+					}
+				} else if header == "medium.com" {
+					s := record[i]
+					if s != "" {
+						profileUsernames["medium.com"] = s
+					}
 				}
 			}
 
-			person := types.NewPerson(firstName, lastName, roles, gitHubUsername)
+			person := types.NewPerson(firstName, lastName, roles, profileUsernames)
 			people = append(people, person)
 		}
 

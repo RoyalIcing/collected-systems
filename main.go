@@ -60,8 +60,9 @@ func main() {
 		query: Query
 	}
 
-	type GitHubUser {
-		name: String
+	type Profile {
+		domain: String
+		username: String
 	}
 
 	enum Role {
@@ -76,7 +77,7 @@ func main() {
 		firstName: String
 		lastName: String
 		roles: [Role]
-		gitHubUser: GitHubUser
+		profiles: [Profile]
 	}
 
 	type Query {
