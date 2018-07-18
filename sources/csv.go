@@ -24,7 +24,8 @@ var profileDomains = map[string]bool{
 	"twitter.com": true,
 }
 
-func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
+// ReadPeopleCSVFrom loads all the people stored in a CSV source
+func ReadPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
 	people := []*types.Person{}
 	csvReader := csv.NewReader(reader)
 
@@ -82,10 +83,11 @@ func ReadPeopleCSVFile(path string) (*[]*types.Person, error) {
 		return nil, err
 	}
 
-	return readPeopleCSVFrom(file)
+	return ReadPeopleCSVFrom(file)
 }
 
-func readServicesCSVFrom(reader io.Reader) (*[]*types.Service, error) {
+// ReadServicesCSVFrom loads all the services stored in a CSV source
+func ReadServicesCSVFrom(reader io.Reader) (*[]*types.Service, error) {
 	services := []*types.Service{}
 	csvReader := csv.NewReader(reader)
 
@@ -133,5 +135,5 @@ func ReadServicesCSVFile(path string) (*[]*types.Service, error) {
 		return nil, err
 	}
 
-	return readServicesCSVFrom(file)
+	return ReadServicesCSVFrom(file)
 }

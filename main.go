@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gobuffalo/packr"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 
 	"github.com/RoyalIcing/collected-systems/sources"
 	"github.com/RoyalIcing/collected-systems/types"
 )
+
+var box = packr.NewBox("./samples/cogent")
 
 type query struct{}
 
@@ -22,7 +25,12 @@ type peopleArgs struct {
 }
 
 func (*query) People(ctx context.Context, args peopleArgs) (*[]*types.Person, error) {
-	maybeAllPeople, err := sources.ReadPeopleCSVFile("./samples/cogent/people.csv")
+	file, err := box.Open("./people.csv")
+	if err != nil {
+		return nil, err
+	}
+
+	maybeAllPeople, err := sources.ReadPeopleCSVFrom(file)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +63,12 @@ func (*query) People(ctx context.Context, args peopleArgs) (*[]*types.Person, er
 }
 
 func (*query) Services(ctx context.Context) (*[]*types.Service, error) {
-	maybeAllServices, err := sources.ReadServicesCSVFile("./samples/cogent/services.csv")
+	file, err := box.Open("./services.csv")
+	if err != nil {
+		return nil, err
+	}
+
+	maybeAllServices, err := sources.ReadServicesCSVFrom(file)
 	if err != nil {
 		return nil, err
 	}
