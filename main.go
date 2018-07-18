@@ -9,8 +9,8 @@ import (
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 
-	"./sources"
-	"./types"
+	"github.com/RoyalIcing/collected-systems/sources"
+	"github.com/RoyalIcing/collected-systems/types"
 )
 
 type query struct{}
@@ -54,10 +54,29 @@ func (*query) People(ctx context.Context, args peopleArgs) (*[]*types.Person, er
 	return &matchingPeople, nil
 }
 
+func (*query) Services(ctx context.Context) (*[]*types.Service, error) {
+	maybeAllServices, err := sources.ReadServicesCSVFile("./samples/cogent/services.csv")
+	if err != nil {
+		return nil, err
+	}
+
+	if maybeAllServices == nil {
+		return nil, nil
+	}
+
+	allServices := *maybeAllServices
+
+	return &allServices, nil
+}
+
 func main() {
 	s := `
 	schema {
 		query: Query
+	}
+
+	type Service {
+		domain: String
 	}
 
 	type Profile {
@@ -83,6 +102,7 @@ func main() {
 	type Query {
 		hello: String!
 		people(rolesIn: [Role!]): [Person]
+		services: [Service]
 	}
 	`
 	port := "3838"

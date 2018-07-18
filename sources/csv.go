@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"../types"
+	"github.com/RoyalIcing/collected-systems/types"
 )
 
 func parseRoles(input string) []string {
@@ -83,4 +83,55 @@ func ReadPeopleCSVFile(path string) (*[]*types.Person, error) {
 	}
 
 	return readPeopleCSVFrom(file)
+}
+
+func readServicesCSVFrom(reader io.Reader) (*[]*types.Service, error) {
+	services := []*types.Service{}
+	csvReader := csv.NewReader(reader)
+
+	headers, err := csvReader.Read()
+	for {
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		for {
+			record, err := csvReader.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+
+			domain := ""
+
+			for i, header := range headers {
+				if header == "domain" {
+					domain = record[i]
+				}
+			}
+
+			if domain != "" {
+				service := types.NewService(domain)
+				services = append(services, service)
+			}
+		}
+
+		break
+	}
+	return &services, nil
+}
+
+// ReadServicesCSVFile loads all the services stored in a CSV file
+func ReadServicesCSVFile(path string) (*[]*types.Service, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return readServicesCSVFrom(file)
 }
