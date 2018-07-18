@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	// "encoding/csv"
 	"log"
 	"net/http"
+	"strings"
 
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
@@ -17,8 +17,41 @@ type query struct{}
 
 func (*query) Hello() string { return "Hello, world!" }
 
-func (*query) People(context.Context) (*[]*types.Person, error) {
-	return sources.ReadPeopleCSVFile("./samples/cogent/people.csv")
+type peopleArgs struct {
+	RolesIn *[]string
+}
+
+func (*query) People(ctx context.Context, args peopleArgs) (*[]*types.Person, error) {
+	maybeAllPeople, err := sources.ReadPeopleCSVFile("./samples/cogent/people.csv")
+	if err != nil {
+		return nil, err
+	}
+
+	if maybeAllPeople == nil {
+		return nil, nil
+	}
+
+	allPeople := *maybeAllPeople
+	matchingPeople := allPeople[:]
+
+	if allPeople != nil && args.RolesIn != nil {
+		matchingPeople = allPeople[:0]
+		for _, person := range allPeople {
+			matchedRole := false
+			for _, desiredRole := range *args.RolesIn {
+				desiredRole = strings.ToUpper(desiredRole)
+				if person.HasRole(desiredRole) {
+					matchedRole = true
+					break
+				}
+			}
+			if matchedRole {
+				matchingPeople = append(matchingPeople, person)
+			}
+		}
+	}
+
+	return &matchingPeople, nil
 }
 
 func main() {
@@ -31,16 +64,24 @@ func main() {
 		name: String
 	}
 
+	enum Role {
+		EXECUTIVE
+		ENGINEERING
+		DESIGN
+		PRODUCT
+		PRINCIPAL
+	}
+
 	type Person {
 		firstName: String
 		lastName: String
-		roles: [String]
+		roles: [Role]
 		gitHubUser: GitHubUser
 	}
 
 	type Query {
 		hello: String!
-		people: [Person]
+		people(rolesIn: [Role!]): [Person]
 	}
 	`
 	port := "3838"

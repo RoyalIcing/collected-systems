@@ -4,7 +4,7 @@ package types
 type Person struct {
 	firstName      string
 	lastName       string
-	roles          []*string
+	roles          []string
 	gitHubUsername *string
 }
 
@@ -13,10 +13,20 @@ func NewPerson(firstName string, lastName string, roles []string, gitHubUsername
 	person := Person{
 		firstName:      firstName,
 		lastName:       lastName,
-		roles:          optionalStrings(roles),
+		roles:          roles,
 		gitHubUsername: gitHubUsername,
 	}
 	return &person
+}
+
+// HasRole returns true if has passed role
+func (person *Person) HasRole(role string) bool {
+	for _, r := range person.roles {
+		if role == r {
+			return true
+		}
+	}
+	return false
 }
 
 // FirstName resolved
@@ -31,7 +41,8 @@ func (person *Person) LastName() *string {
 
 // Roles resolved
 func (person *Person) Roles() *[]*string {
-	return &person.roles
+	roles := optionalStrings(person.roles)
+	return &roles
 }
 
 // GitHubUser resolves using the `gitHubUsername` field

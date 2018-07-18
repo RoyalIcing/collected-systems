@@ -11,7 +11,11 @@ import (
 
 func parseRoles(input string) []string {
 	elements := strings.Split(input, ",")
-	return elements
+	adjusted := elements[:0]
+	for _, s := range elements {
+		adjusted = append(adjusted, strings.ToUpper(s))
+	}
+	return adjusted
 }
 
 func readPeopleCSVFrom(reader io.Reader) (*[]*types.Person, error) {
