@@ -1,8 +1,17 @@
 package types
 
+import (
+	graphql "github.com/graph-gophers/graphql-go"
+)
+
 // Profile is an individual on a platform, e.g. GitHub, Medium
 type Profile struct {
 	domain   string
+	username string
+}
+
+// GitHubUserProfile is an account on GitHub
+type GitHubUserProfile struct {
 	username string
 }
 
@@ -28,4 +37,27 @@ func (user *Profile) Domain() *string {
 // Username resolved
 func (user *Profile) Username() *string {
 	return &user.username
+}
+
+// NewGitHubUserProfile makes a person with the provided values
+func NewGitHubUserProfile(username string) *GitHubUserProfile {
+	user := GitHubUserProfile{
+		username: username,
+	}
+	return &user
+}
+
+// ToGitHubUserProfile attempts to convert to a GitHub user profile
+func (user *Profile) ToGitHubUserProfile() (*GitHubUserProfile, bool) {
+	if user.domain == "github.com" {
+		return NewGitHubUserProfile(user.username), true
+	}
+
+	return nil, false
+}
+
+// ReposURL resolved
+func (user *GitHubUserProfile) ReposURL() *graphql.ID {
+	id := graphql.ID("https://github.com/" + user.username + "?tab=repositories")
+	return &id
 }

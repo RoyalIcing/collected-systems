@@ -92,9 +92,13 @@ func main() {
 		domain: String
 	}
 
-	type Profile {
+	interface Profile {
 		service: Service
 		username: String
+	}
+
+	type GitHubUserProfile implements Profile {
+		reposURL: ID
 	}
 
 	enum Role {
