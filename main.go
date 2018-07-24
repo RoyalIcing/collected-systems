@@ -93,7 +93,7 @@ func main() {
 	}
 
 	type Profile {
-		domain: String
+		service: Service
 		username: String
 	}
 

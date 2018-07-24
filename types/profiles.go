@@ -15,6 +15,11 @@ func NewProfile(domain string, username string) *Profile {
 	return &user
 }
 
+// Service resolved
+func (user *Profile) Service() *Service {
+	return NewService(user.domain)
+}
+
 // Domain resolved
 func (user *Profile) Domain() *string {
 	return &user.domain
