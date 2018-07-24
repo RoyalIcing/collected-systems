@@ -1,5 +1,5 @@
 dev:
-	go run main.go
+	$(GOPATH)/bin/gin -p 3839 -a 3838 run main.go
 
 docker-build:
 	docker build -t collected-systems .
