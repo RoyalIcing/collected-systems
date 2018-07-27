@@ -2,7 +2,6 @@ package sources
 
 import (
 	"context"
-	"strings"
 
 	"github.com/gobuffalo/packr"
 
@@ -41,27 +40,7 @@ func (l LocalFileSource) People(ctx context.Context, args query.PeopleArgs) (*[]
 		return nil, nil
 	}
 
-	allPeople := *maybeAllPeople
-	matchingPeople := allPeople[:]
-
-	if allPeople != nil && args.RolesIn != nil {
-		matchingPeople = allPeople[:0]
-		for _, person := range allPeople {
-			matchedRole := false
-			for _, desiredRole := range *args.RolesIn {
-				desiredRole = strings.ToUpper(desiredRole)
-				if person.HasRole(desiredRole) {
-					matchedRole = true
-					break
-				}
-			}
-			if matchedRole {
-				matchingPeople = append(matchingPeople, person)
-			}
-		}
-	}
-
-	return &matchingPeople, nil
+	return query.FilterPeople(*maybeAllPeople, args)
 }
 
 // Services resolved
