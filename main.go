@@ -15,7 +15,7 @@ import (
 	"github.com/RoyalIcing/collected-systems/types"
 )
 
-var box = packr.NewBox("./samples/cogent")
+var box = packr.NewBox("./samples/RoyalIcing")
 
 type query struct{}
 
