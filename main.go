@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gobuffalo/packr"
@@ -98,6 +99,8 @@ func main() {
 	}
 
 	type GitHubUserProfile implements Profile {
+		service: Service
+		username: String
 		reposURL: ID
 	}
 
@@ -122,7 +125,10 @@ func main() {
 		services: [Service]
 	}
 	`
-	port := "3838"
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "3838"
+	}
 	schema := graphql.MustParseSchema(s, &query{})
 	http.Handle("/", &relay.Handler{Schema: schema})
 	log.Fatal(http.ListenAndServe(":"+port, nil))

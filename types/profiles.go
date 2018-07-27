@@ -29,11 +29,6 @@ func (user *Profile) Service() *Service {
 	return NewService(user.domain)
 }
 
-// Domain resolved
-func (user *Profile) Domain() *string {
-	return &user.domain
-}
-
 // Username resolved
 func (user *Profile) Username() *string {
 	return &user.username
@@ -54,6 +49,16 @@ func (user *Profile) ToGitHubUserProfile() (*GitHubUserProfile, bool) {
 	}
 
 	return nil, false
+}
+
+// Service resolved
+func (user *GitHubUserProfile) Service() *Service {
+	return NewService("github.com")
+}
+
+// Username resolved
+func (user *GitHubUserProfile) Username() *string {
+	return &user.username
 }
 
 // ReposURL resolved
