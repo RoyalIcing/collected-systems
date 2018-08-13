@@ -37,8 +37,8 @@ enum MediaBaseType {
 
 # See https://www.iana.org/assignments/media-types/media-types.xhtml
 type MediaType {
-  baseType: String
-  subtype: String
+  baseType: String!
+  subtype: String!
   parameters: [String]
 }
 
@@ -53,7 +53,7 @@ type AssetReference implements Node {
 }
 
 type MarkdownDocument implements Asset {
-  #mediaType: MediaType!
+  mediaType: MediaType!
   source: String
 
   #assetReferences: [AssetReference]

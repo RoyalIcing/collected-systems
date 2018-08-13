@@ -17,6 +17,13 @@ func NewMarkdownDocument(source string) *MarkdownDocument {
 	return &markdownDocument
 }
 
+// MediaType resolved
+func (markdownDocument *MarkdownDocument) MediaType() MediaType {
+	parameters := []string{}
+	mediaType := NewMediaType("text", "markdown", parameters)
+	return mediaType
+}
+
 // Source resolved
 func (markdownDocument *MarkdownDocument) Source() *string {
 	return &markdownDocument.source
