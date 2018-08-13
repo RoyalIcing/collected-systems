@@ -137,3 +137,62 @@ func ReadServicesCSVFile(path string) (*[]*types.Service, error) {
 
 	return ReadServicesCSVFrom(file)
 }
+
+// ReadPostsCSVFrom loads all the posts stored in a CSV source
+func ReadPostsCSVFrom(reader io.Reader) (*[]*types.PostEdge, error) {
+	postEdges := []*types.PostEdge{}
+	csvReader := csv.NewReader(reader)
+
+	headers, err := csvReader.Read()
+	for {
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		for {
+			record, err := csvReader.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return nil, err
+			}
+
+			id := ""
+			markdownSource := ""
+
+			for i, header := range headers {
+				if header == "id" {
+					id = record[i]
+				} else if header == "markdownSource" {
+					markdownSource = record[i]
+				}
+			}
+
+			if id != "" && markdownSource != "" {
+				markdownDocument := types.NewMarkdownDocument(markdownSource)
+
+				post := types.NewPost(id, markdownDocument)
+
+				postEdge := types.NewPostEdge(post, id)
+				postEdges = append(postEdges, postEdge)
+			}
+		}
+
+		break
+	}
+	return &postEdges, nil
+}
+
+// ReadPostsCSVFile loads all the posts stored in a CSV file
+func ReadPostsCSVFile(path string) (*[]*types.PostEdge, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return ReadPostsCSVFrom(file)
+}

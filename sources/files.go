@@ -63,3 +63,26 @@ func (l LocalFileSource) Services(ctx context.Context) (*[]*types.Service, error
 
 	return &allServices, nil
 }
+
+// ExamplePosts resolved
+func (l LocalFileSource) ExamplePosts(ctx context.Context) (types.PostConnection, error) {
+	file, err := l.box.Open("./posts.csv")
+	if err != nil {
+		return types.NewPostConnection(nil), err
+	}
+
+	maybeAllPostEdges, err := ReadPostsCSVFrom(file)
+	if err != nil {
+		return types.NewPostConnection(nil), err
+	}
+
+	if maybeAllPostEdges == nil {
+		return types.NewPostConnection(nil), nil
+	}
+
+	allPostEdges := *maybeAllPostEdges
+
+	postConnection := types.NewPostConnection(&allPostEdges)
+
+	return postConnection, nil
+}

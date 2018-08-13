@@ -1,0 +1,7 @@
+{
+  "name": "collected-systems",
+  "profile": "default",
+  "regions": [
+    "us-west-2"
+  ]
+}
